@@ -2,7 +2,7 @@ CFLAGS := -std=c99 -g -Og -Werror -Wall -Wpedantic
 
 EXE := lib/main
 
-OBJS := obj/main.o obj/stack.o obj/mem.o
+OBJS := obj/bfi.o obj/stack.o obj/mem.o
 
 $(EXE): $(OBJS) lib
 	$(CC) -Iinc/ $(CFLAGS) -o $(EXE) $(OBJS)

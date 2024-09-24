@@ -49,7 +49,7 @@ void mem_printDebug(void) {
     int windowSize = 10;
     int index = mem.index;
 
-    printf("index: %d [%d..%d]: ", index, index, (index + windowSize) % MEM_SIZE);
+    printf("index: %d [%d..%d]: ", index, index, (index + windowSize - 1) % MEM_SIZE);
 
     while (windowSize--) {
         printf("%d ", mem.array[index]);

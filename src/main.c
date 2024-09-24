@@ -6,7 +6,6 @@
 #include "mem.h"
 
 int main(void) {
-
     mem_inc();
     mem_inc();
     mem_inc();
