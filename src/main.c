@@ -3,9 +3,26 @@
 #include <stdlib.h>
 
 #include "stack.h"
+#include "mem.h"
 
-int main(void)
-{
+int main(void) {
+
+    mem_inc();
+    mem_inc();
+    mem_inc();
+    mem_inc();
+
+    mem_right();
+    mem_inc();
+    mem_inc();
+    mem_inc();
+
+    for (int i = 0; i < 16; i++) {
+        mem_right();
+    }
+    mem_printDebug();
+
+    return 0;
   stack_push(10);
   stack_push(8);
   stack_push(-40);

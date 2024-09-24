@@ -2,14 +2,13 @@ CFLAGS := -std=c99 -g -Og -Werror -Wall -Wpedantic
 
 EXE := lib/main
 
-$(EXE): obj/main.o obj/stack.o lib
-	$(CC) -Iinc/ $(CFLAGS) -o $(EXE) obj/main.o obj/stack.o
+OBJS := obj/main.o obj/stack.o obj/mem.o
 
-obj/stack.o: src/stack.c obj
-	$(CC) -c -Iinc/ $(CFLAGS) -o obj/stack.o src/stack.c
+$(EXE): $(OBJS) lib
+	$(CC) -Iinc/ $(CFLAGS) -o $(EXE) $(OBJS)
 
-obj/main.o: src/main.c obj
-	$(CC) -c -Iinc/ $(CFLAGS) -o obj/main.o src/main.c
+obj/%.o: src/%.c obj
+	$(CC) -c -Iinc/ $(CFLAGS) -o $@ $<
 
 obj:
 	mkdir -p obj
