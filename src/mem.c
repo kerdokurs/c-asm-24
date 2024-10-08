@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define MEM_SIZE 40
+#define MEM_SIZE 30000
 
 struct mem_st {
     int index;
@@ -25,8 +25,9 @@ int mem_dec(void) {
 
 int mem_left(void) {
     mem.index--;
-    // FIXME: test
-    mem.index %= (MEM_SIZE - 1);
+    if (mem.index < 0) {
+        mem.index = MEM_SIZE - 1;
+    }
     return mem.index;
 }
 
