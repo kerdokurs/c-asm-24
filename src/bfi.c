@@ -40,6 +40,8 @@ enum instructions_e {
 };
 
 void interpret(const char *program) {
+    struct stack_st stack = EMPTY_STACK;
+
     int i = 0;
     while (program[i] != 0 ) {
         switch (program[i]) {
@@ -85,12 +87,12 @@ void interpret(const char *program) {
                         }
                     }
                 } else {
-                    stack_push(i);
+                    stack_push(&stack, i);
                 }
                 break;
             }
             case BF_END_LOOP: {
-                i = stack_pop() - 1;
+                i = stack_pop(&stack) - 1;
                 break;
             }
             default:
@@ -102,7 +104,106 @@ void interpret(const char *program) {
     }
 }
 
+typedef struct player_t {
+    int x;
+    int y;
+
+    void (*move)(struct player_t *this, int dx, int dy);
+    void (*update)(struct player_t *this, float dt);
+} player_t;
+
+void player_move(player_t *this, int dx, int dy) {
+    this->x += dx;
+    this->y += dy;
+}
+
+void player_update(player_t *this, float dt) {
+    this->x *= dt;
+    this->y *= dt;
+}
+
+void enemy_move(player_t *this, int dx, int dy) {
+    this->x -= dx;
+    this->y -= dy;
+}
+
+#include <stdlib.h>
+
+player_t *player_new(int x, int y) {
+    player_t *player = malloc(sizeof(player_t));
+    player->x = x;
+    player->y = y;
+    player->move = player_move;
+    return player;
+}
+
+player_t *enemy_new(int x, int y) {
+    player_t *player = malloc(sizeof(player_t));
+    player->x = x;
+    player->y = y;
+    player->move = enemy_move;
+    return player;
+}
+
+int driver_init(void) {
+    int err = 0;
+    int *ptr = alloc();
+    if (!ptr) {
+        return -1;
+    }
+    int *ptr1 = alloc2();
+    if (!ptr1) {
+        err = PTR1_FAILED;
+        goto cleanup;
+    }
+    int *ptr2 = alloc2();
+    if (!ptr1) {
+        err = PTR2_FAILED;
+        goto cleanup;
+    }
+
+    return OK;
+
+finish_alloc:
+    ...
+    ptr1;
+    ptr2;
+
+    if (!ptr1) {
+        goto cleanup;
+    }
+
+cleanup:
+    free(ptr);
+    free(ptr1);
+    free(ptr2);
+    return err;
+}
+
+struct x_st {
+    union {
+        int x;
+        char xs[4];
+    } xy;
+};
+
 int main(int argc, char **argv, char **envp) {
+    player_t *player = player_new(0, 0);
+    player_t *enemy = enemy_new(5, 5);
+    printf("(%d, %d)\n", player->x, player->y);
+    printf("(%d, %d)\n", enemy->x, enemy->y);
+    player->move(player, 10, 10);
+    enemy->move(enemy, 10, 10);
+    printf("(%d, %d)\n", player->x, player->y);
+    printf("(%d, %d)\n", enemy->x, enemy->y);
+
+    struct x_st x = { 5 };
+    printf("int: %d\n", x.xy.x);
+    printf("char[]: %d %d %d %d\n", x.xy.xs[0], x.xy.xs[1], x.xy.xs[2], x.xy.xs[3]);
+    printf("%ld\n", sizeof(struct x_st));
+
+    return 0;
+
     if (argc != 2) {
         fprintf(stderr, "Programmil peab olema üks parameeter, milleks on BF programm!\n");
         return 1;

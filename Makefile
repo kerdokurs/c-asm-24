@@ -1,4 +1,4 @@
-CFLAGS := -std=c99 -g -Og -Werror -Wall -Wpedantic
+CFLAGS := -std=c11 -g -Og -Werror -Wall -Wpedantic
 
 EXE := lib/main
 EXE_BT2C := lib/bt2c

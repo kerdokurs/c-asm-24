@@ -1,63 +1,80 @@
 #include "stack.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
-#define STACK_SIZE 100
+void stack_push(struct stack_st *s, int element) {
+    if (s->size == 0 || s->arr == NULL) {
+        s->size = 1;
+        
+        int *arr = malloc(sizeof(int) * s->size);
+        s->arr = arr;
 
-struct stack_st
-{
-  int length;
-  int array[STACK_SIZE];
-};
+        if (s->arr == NULL) {
+           fprintf(stderr, "Mälu otsas!\n");
+           return;
+        }
 
-struct stack_st stack = {
-    .length = 0,
-    .array = {0},
-};
+        s->length = 0;
+    } else if (s->length == s->size) {
+        int tmp_size = s->size * 2;
+        int *tmp_arr = realloc(s->arr, sizeof(int) * tmp_size);
 
-void stack_push(int element)
-{
-  if (stack.length >= STACK_SIZE)
-  {
-    printf("Viga: pinusse rohkem elemente ei mahu\n");
-    return;
-  }
+        if (tmp_arr == NULL) {
+            fprintf(stderr, "Mäluala suuruse muutmine ebaõnnestus.\n");
+            return;
+        }
 
-  stack.array[stack.length] = element;
-  stack.length++;
+        s->arr = tmp_arr;
+        s->size = tmp_size;
+    }
+
+    s->arr[s->length] = element;
+    s->length++;
 }
 
-int stack_pop(void)
-{
-  if (stack_isEmpty())
-  {
-    return 0;
-  }
+int stack_pop(struct stack_st *s) {
+    if (stack_isEmpty(s)) {
+        return 0;
+    }
 
-  int element = stack.array[stack.length - 1];
-  stack.length--;
-  return element;
+    int element = s->arr[s->length - 1];
+    s->length--;
+
+    if (s->length == 0) {
+        s->size = 0;
+        free(s->arr);
+        s->arr = NULL;
+    } else if (s->length <= s->size / 4) {
+        int tmp_size = s->size / 2;
+        int *tmp_arr = realloc(s->arr, sizeof(int) * tmp_size);
+
+        if (tmp_arr == NULL) {
+            fprintf(stderr, "Mäluala suuruse muutmine ebaõnnestus.\n");
+            return -1;
+        }
+
+        s->arr = tmp_arr;
+        s->size = tmp_size;
+    }
+
+    return element;
 }
 
-bool stack_isEmpty(void)
-{
-  return !(stack.length > 0);
+bool stack_isEmpty(struct stack_st *s) {
+    return !(s->length > 0);
 }
 
-int stack_peek(void)
-{
-  if (stack_isEmpty())
-  {
-    return 0;
-  }
+int stack_peek(struct stack_st *s) {
+    if (stack_isEmpty(s)) {
+        return 0;
+    }
 
-  return stack.array[stack.length - 1];
+    return s->arr[s->length - 1];
 }
 
-void stack_print(void)
-{
-  for (int i = stack.length - 1; i >= 0; i--)
-  {
-    printf("%d\n", stack.array[i]);
-  }
+void stack_print(struct stack_st *s) {
+    for (int i = s->length - 1; i >= 0; i--) {
+        printf("%d\n", s->arr[i]);
+    }
 }
